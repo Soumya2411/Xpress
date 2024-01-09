@@ -14,6 +14,7 @@ import CategoryInput from '../inputs/CategoryInput';
 import CountrySelect from '../inputs/CountrySelect';
 import ImageUpload from '../inputs/ImageUpload';
 import Input from '../inputs/Input';
+import { Feature } from '@prisma/client';
 
 enum STEPS {
   CATEGORY = 0,
@@ -25,6 +26,19 @@ enum STEPS {
 }
 
 const BusinessModal = () => {
+  const [features, setFeatures] = useState<Feature[]>([]);
+
+  const addFeature = () => {
+    setFeatures([...features, {
+      service: "",
+      price: 0,
+    }]); // Add a new empty string to the features array
+  };
+  const handleFeatureChange = (index: number, value: Feature) => {
+    const updatedFeatures = [...features];
+    updatedFeatures[index] = value;
+    setFeatures(updatedFeatures);
+  };
   const businessModal = useSetupBusiness();
   const [step, setStep] = useState(STEPS.CATEGORY);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,8 +60,9 @@ const BusinessModal = () => {
       price: 1,
       title: '',
       description: '',
-      featureOne: '',
-      featureTwo: '',
+      // featureOne: '',
+      // featureTwo: '',
+      features: [{ service: "", price: 0 }],
     },
   });
   const category = watch('category');
@@ -84,6 +99,14 @@ const BusinessModal = () => {
     return 'Next';
   }, [step]);
 
+
+  const removeFeature = () => {
+    const updatedFeatures = [...features];
+    updatedFeatures.pop();
+    setFeatures(updatedFeatures);
+  }
+
+
   const secondaryActionLabel = useMemo(() => {
     if (step === STEPS.CATEGORY) {
       return undefined;
@@ -99,7 +122,7 @@ const BusinessModal = () => {
     setIsLoading(true);
 
     axios
-      .post('/api/listings', data)
+      .post('/api/listings', { ...data, features })
       .then(() => {
         toast.success('Listing created!');
         router.refresh();
@@ -165,26 +188,51 @@ const BusinessModal = () => {
       <div className="flex flex-col gap-8">
         <Heading
           title="Share some details about your business"
-          subtitle="What features do you provide?"
+          subtitle="What service do you provide?"
         />
-        <div className="flex flex-row justify-between gap-2">
-          <Input
-            id="featureOne"
-            label="Benefit 1"
-            disabled={isLoading}
-            register={register}
-            errors={errors}
-            // required
-          />
-          <Input
-            id="featureTwo"
-            label="Benefit 2"
-            disabled={isLoading}
-            register={register}
-            errors={errors}
-            // required
-          />
+        <div>
+          <div className="flex flex-col gap-2">
+            {features.map((feature, index) => (
+              // eslint-disable-next-line react/jsx-key
+              <div className="flex gap-8 ">
+                <input
+                  key={index}
+                  className="border p-2"
+                  value={feature.service}
+                  onChange={(e) => handleFeatureChange(index, { ...feature, service: e.target.value })}
+                  disabled={isLoading}
+                />
+                <input
+                  key={index}
+                  id="price"
+                  type="number"
+                  className="border border-solid "
+                  onChange={(e) => handleFeatureChange(index, { ...feature, price: parseInt(e.target.value) })}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-4">
+          <button
+            type="button"
+            className="mt-2 bg-blue-500 text-white p-2 rounded"
+            onClick={addFeature}
+          >
+            + Add Service
+          </button>
+          <button
+            type="button"
+            className="mt-2 bg-red-500 text-white p-2 rounded"
+            onClick={removeFeature}
+          >
+            - Remove Service
+
+          </button>
+          </div>
         </div>
+
       </div>
     );
   }
@@ -235,10 +283,10 @@ const BusinessModal = () => {
     bodyContent = (
       <div className="flex flex-col gap-8">
         <Heading
-          title="Now, set your price and time"
-          subtitle="Set price and time"
+          title="Now, set your  time"
+          // subtitle="Set price and time"
         />
-        <Input
+        {/* <Input
           id="price"
           label="Price"
           formatPrice
@@ -247,7 +295,7 @@ const BusinessModal = () => {
           register={register}
           errors={errors}
           required
-        />
+        /> */}
         <Input
           id="time"
           label="Time in hh/mm"

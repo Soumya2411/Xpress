@@ -28,7 +28,7 @@ import 'react-clock/dist/Clock.css';
 
 import { cn } from '../datepicker/libs/utils';
 import Button from '../Button';
-import { Reservation } from '@prisma/client';
+import { Feature, Reservation } from '@prisma/client';
 import { SafeReservation } from '@/app/types';
 
 interface TimeOption {
@@ -47,6 +47,9 @@ interface ListingReservationProps {
   onSelect: (date: Date) => void;
   handleTimeSelect: (time: Date) => void;
   reserved: SafeReservation[];
+  features: Feature[];
+  removeFeature: (featureIndex: number) => void;
+  
 }
 
 const ListingReservation: React.FC<ListingReservationProps> = ({
@@ -60,6 +63,9 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
   handleTimeSelect,
   disableDates,
   reserved = [],
+  features,
+  removeFeature,
+  
 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(new Date());
@@ -68,7 +74,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
     onSelect(date);
   };
 
-  
+
 
   const minSelectableDate = addDays(new Date(), 0);
 
@@ -116,15 +122,16 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
   };
 
   const taxRate = 0.02;
-  const taxPrice = price * taxRate;
-  const total = (price + taxPrice).toFixed(2);
+  const total = (features.reduce((previous, current) => previous + current.price, 0)) 
+   const totalPriceAfterTax= (total + (total * taxRate)).toFixed(2);
+  const taxPrice = (total * taxRate);
 
   return (
     <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden">
-      <div className="flex flex-row items-center gap-1 p-4">
+      {/* <div className="flex flex-row items-center gap-1 p-4">
         <div className="text-2xl font-semibold ">Price - ${price}</div>
       </div>
-      <hr />
+      <hr /> */}
       <Calendar
         color="#000"
         minDate={minSelectableDate}
@@ -148,8 +155,8 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
                     className={cn(
                       'bg-green-200 rounded-lg px-2 text-gray-800 relative hover:border hover:border-green-400 w-[60px] h-[26px]',
                       selectedTime &&
-                        isSameMinute(selectedTime, hour) &&
-                        'bg-black text-white',
+                      isSameMinute(selectedTime, hour) &&
+                      'bg-black text-white',
                       isDisabled && 'bg-gray-400 cursor-not-allowed'
                     )}
                     onClick={() => handleTimeClick(hour)}
@@ -164,14 +171,26 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
       </div>
       <hr />
       <div className="flex flex-col p-2">
-        <div className="px-2 flex flex-row items-center justify-between font-semibold text-sm ">
+        <div className="px-2   font-semibold text-sm ">
+          {features.map((feature, index) => (
+            <div key={index} className="feature grid grid-cols-3 py-2">
+              {feature.service} 
+              <div className="">
+               ${feature.price}
+               </div>
+              <button className='text-red-400' onClick={() => removeFeature(index)}>Cancel</button>
+            </div>
+            
+          ))}
+          <div className="grid grid-cols-3">
           <div>Tax(2%)</div>
           <div>${taxPrice.toFixed(2)}</div>
+          </div>
         </div>
 
         <div className="p-4 flex flex-row items-center justify-between font-semibold text-lg ">
           <div>Total</div>
-          <div>${total}</div>
+          <div>${totalPriceAfterTax}</div>
         </div>
 
         <Button label="Reserve" disabled={disabled} onClick={onSubmit} />

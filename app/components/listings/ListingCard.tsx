@@ -89,6 +89,14 @@ const ListingCard: React.FC<ListingCardProps> = ({
         <div className=" text-sm flex gap-2">
           <CiLocationOn size={15} /> {location?.label}, {location?.region}
         </div>
+        <div>
+          {data.features.map(value => (
+            // eslint-disable-next-line react/jsx-key
+            <div className="flex  flex-row items-center gap-1">
+              <div className="font-bold text-lg">{value.service}</div>
+            </div>
+          ))}
+        </div>
         <div className="flex  flex-row items-center gap-1">
           <div className="font-bold text-lg">$ {price}</div>
         </div>

@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+type Feature {
+  service String
+  price Int
+}
+
+
 model User {
   id              String @id @default(auto()) @map("_id") @db.ObjectId
   name            String?
@@ -58,8 +64,10 @@ model Listing {
   locationValue String
   userId String @db.ObjectId
   price Int
-  featureOne String?
-  featureTwo String?
+  // featureOne String?
+  // featureTwo String?
+  features Feature[]
+ 
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations Reservation[]
@@ -70,6 +78,7 @@ model Reservation {
   userId String @db.ObjectId
   listingId String @db.ObjectId  
   startDate DateTime
+  features Feature[]
   endDate DateTime?
   totalPrice Int
   createdAt DateTime @default(now())
