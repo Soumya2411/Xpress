@@ -6,22 +6,26 @@ import { IconType } from 'react-icons';
 import Avatar from '../Avatar';
 import { SafeUser } from '@/app/types';
 import ListingCategory from './ListingCategory';
+import Button from '../Button';
+import { Feature } from '@prisma/client';
 
 const Map = dynamic(() => import('../Map'), { ssr: false });
 
 interface ListingInfoProps {
   user: SafeUser;
+  features: Feature[];
   description: string;
-  featureOne?: string | null;
-  featureTwo?: string | null;
+
   category:
-    | {
-        icon: IconType;
-        label: string;
-        description: string;
-      }
-    | undefined;
+  | {
+    icon: IconType;
+    label: string;
+    description: string;
+  }
+  | undefined;
   locationValue: string;
+  addFeature: (featureIndex: number) => void;
+  featureVisibility: boolean[];
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({
@@ -29,10 +33,15 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
   description,
   category,
   locationValue,
-  featureOne,
-  featureTwo,
+  features,
+  // featureOne,
+  // featureTwo,
+  addFeature,
+  featureVisibility,
+ 
 }) => {
   const { getByValue } = useCountries();
+  const featureToAdd = 'Wi-Fi';
 
   const coordinates = getByValue(locationValue)?.latlng;
   return (
@@ -53,16 +62,40 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
         </div>
         <div
           className="
-            flex 
-            flex-row 
-            items-center 
-            gap-4 
+          
             font-light
             text-neutral-500
           "
         >
-          <div>{featureOne}</div>
-          <div>{featureTwo}</div>
+          <div className="grid grid-cols-3  font-semibold text-black">
+         <text>
+              Service
+            </text>
+           <div className="ml-5">
+             Price
+             </div>
+           <div className="">
+
+           </div>
+          </div>
+          {
+            features.map((feature, index) => (
+              // eslint-disable-next-line react/jsx-key
+              featureVisibility[index] &&(
+              // eslint-disable-next-line react/jsx-key
+              <div className="grid grid-cols-3  py-2">
+               <div className="">
+                {feature.service}
+                </div>
+                
+                {` $ ${feature.price} `}
+                
+                <Button label="Add" onClick={() => addFeature(index)} />
+              </div>
+              )
+            ))
+          }
+
         </div>
       </div>
 
@@ -74,8 +107,8 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
           description={category?.description}
         />
       )}
-      <hr />
-      <Map center={coordinates} />
+      {/* <hr />
+      <Map center={coordinates} /> */}
     </div>
   );
 };

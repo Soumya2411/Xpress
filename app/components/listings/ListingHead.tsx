@@ -14,12 +14,12 @@ interface ListingHeadProps {
   id: string;
   user: SafeUser;
   category:
-    | {
-        icon: IconType;
-        label: string;
-        description: string;
-      }
-    | undefined;
+  | {
+    icon: IconType;
+    label: string;
+    description: string;
+  }
+  | undefined;
   listing: SafeListing;
 }
 
@@ -47,11 +47,10 @@ const ListingHead: React.FC<ListingHeadProps> = ({
         <div className="flex order-last sm:order-first flex-col h-auto py-4 sm:py-20 pl-8 sm:pl-24">
           <div className="text-white font-bold text-4xl">{listing.title}</div>
           <div className="text-white font-bold">By {user.name}</div>
-          <div className="text-white font-semibold text-md">{`~ ${
-            mins ? showMins : ''
-          } minutes`}</div>
+          <div className="text-white font-semibold text-md">{`~ ${mins ? showMins : ''
+            } minutes`}</div>
           <div className="text-red-800 font-bold text-lg">
-        
+
             {category?.label}
           </div>
           <div className="text-white mt-2 flex items-center gap-1 font-normal text-md">
@@ -60,12 +59,14 @@ const ListingHead: React.FC<ListingHeadProps> = ({
           </div>
           <div className="text-white pt-8 text-lg">{listing.description}</div>
           <div className="flex flex-row gap-3 mt-3">
-            <div className="py-1 px-2 bg-white rounded-md outline-none border-none  shadow-md  text-neutral-800">
-              {listing.featureOne}
-            </div>
-            <div className="py-1  px-2 bg-white rounded-md outline-none border-none  shadow-md  text-neutral-800">
-              {listing.featureTwo}
-            </div>
+
+            {
+              listing.features.map((feature) => (
+                <div className="py-1 px-2 bg-white rounded-md outline-none border-none  shadow-md  text-neutral-800">
+                  {feature.service} With Price ${feature.price}
+                </div>
+              ))
+            }
           </div>
         </div>
         <div className="w-full h-full  order-first sm:order-last relative sm:overflow-hidden">

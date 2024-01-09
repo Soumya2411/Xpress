@@ -12,6 +12,7 @@ import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import ListingReservation from '@/app/components/listings/ListingReservation';
+import { Feature } from '@prisma/client';
 
 const initialDateRange = {
   startDate: new Date(),
@@ -29,6 +30,7 @@ interface ListingClientProps {
 const ListingClient: React.FC<ListingClientProps> = ({
   listing,
   currentUser,
+
   // reservations = [],
   reserved = [],
 }) => {
@@ -77,18 +79,24 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const total = (listing?.price + taxPrice).toFixed(2);
   const [totalPrice, setTotalPrice] = useState(listing.price);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
+  const [selectedFeatures, setSelectedFeatures] = useState<Feature[]>([]);
 
   const onCreateReservation = useCallback(() => {
+    const total = (selectedFeatures.reduce((previous, current) => previous + current.price, 0)) 
+   const totalPriceAfterTax= (total + (total * taxRate)).toFixed(2);
+   
     if (!currentUser) {
       return loginModal.onOpen();
     }
     setIsLoading(true);
     axios
       .post('/api/reservations', {
-        totalPrice,
+        totalPrice: parseInt(totalPriceAfterTax),
         startDate: selectedDate,
         startTime: selectedTime,
         listingId: listing?.id,
+        features: selectedFeatures,
+
       })
       .then(() => {
         toast.success('Success');
@@ -128,6 +136,42 @@ const ListingClient: React.FC<ListingClientProps> = ({
     return categories.find((item) => item.label === listing.category);
   }, [listing.category]);
 
+  // const addFeature1 = (feature: string) => {
+  //   if (feature && !features.includes(feature)) {
+  //     setFeatures((prevFeatures) => [...prevFeatures, feature]);
+  //   }
+  // };
+
+  // const addFeatures = (featureIndex: number) => [
+
+  // ]
+  const [featureVisibility, setFeatureVisibility] = useState<boolean[]>(listing.features.map(() => true));
+  const addSelectedFeatures = (featureIndex: number) => {
+    const selectedFeature = listing.features[featureIndex];
+    if (selectedFeature && !selectedFeatures.includes(selectedFeature)) {
+      setSelectedFeatures((prevSelectedFeatures) => [...prevSelectedFeatures, selectedFeature]);
+      setFeatureVisibility((prevVisibility) => 
+        prevVisibility.map((isVisible, index) => index === featureIndex ? false : isVisible));
+    }
+  }
+
+
+
+  const removeFeature = (featureIndex: number) => {
+    const featureNameToRemove = selectedFeatures[featureIndex].service;
+  
+    setSelectedFeatures((prevFeatures) =>
+      prevFeatures.filter((_, index) => index !== featureIndex)
+    );
+  
+    setFeatureVisibility((prevVisibility) =>
+      prevVisibility.map((isVisible, index) => {
+        const currentFeature = listing.features[index];
+        return currentFeature && currentFeature.service === featureNameToRemove ? true : isVisible;
+      })
+    );
+  };
+  
   return (
     <div className="w-full mx-auto">
       <div className="flex flex-col gap-6">
@@ -144,15 +188,19 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-4 px-8 sm:px-24">
           <ListingInfo
+            features={listing.features}
+            addFeature={addSelectedFeatures}
             user={listing.user}
             category={cate}
             description={listing.description}
             locationValue={listing.locationValue}
-            featureOne={listing?.featureOne}
-            featureTwo={listing?.featureTwo}
+            featureVisibility={featureVisibility}
+
           />
           <div className="order-first mb-10 md:order-last md:col-span-3">
             <ListingReservation
+              removeFeature={removeFeature}
+              features={selectedFeatures}
               price={listing.price}
               totalPrice={totalPrice}
               onChangeDate={(value) => setDateRange(value)}
