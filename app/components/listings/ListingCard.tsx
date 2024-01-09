@@ -91,6 +91,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         </div>
         <div>
           {data.features.map(value => (
+            // eslint-disable-next-line react/jsx-key
             <div className="flex  flex-row items-center gap-1">
               <div className="font-bold text-lg">{value.service}</div>
             </div>
