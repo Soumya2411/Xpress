@@ -71,6 +71,7 @@ const RegisterModal = () => {
         register={register}
         required
         errors={errors}
+        pattern='^[a-zA-Z0-9._%+-]+@(gmail\.com|icloud\.com)$'
       />
       <Input
         id="password"
