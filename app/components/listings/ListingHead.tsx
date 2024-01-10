@@ -64,7 +64,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({
               listing.features.map((feature) => (
                 // eslint-disable-next-line react/jsx-key
                 <div className="py-1 px-2 bg-white rounded-md outline-none border-none  shadow-md  text-neutral-800">
-                  {feature.service} With Price ${feature.price}
+                  {feature.service} With Price ₹{feature.price}
                 </div>
               ))
             }

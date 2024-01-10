@@ -39,15 +39,14 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
     <div className="w-full z-10 fixed border-none  outline-none  text-gray-400 shadow-sm ">
       <div className="flex flex-row justify-between items-center py-3 px-4 sm:px-20 bg-[#2C2C2C]">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
-          {/* <Image
+          <Image
             onClick={() => router.push('/')}
             className="hidden md:block cursor-pointer"
             src="/images/companylogo.png"
             height="200"
-            width="200"
+            width="60"
             alt="Logo"
-          /> */}
-          <h2>Companylogo</h2>
+          /> 
         </div>
         {/* <div>
           <Search />

@@ -88,7 +88,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
                 {feature.service}
                 </div>
                 
-                {` $ ${feature.price} `}
+                {` ₹ ${feature.price} `}
                 
                 <Button label="Add" onClick={() => addFeature(index)} />
               </div>
