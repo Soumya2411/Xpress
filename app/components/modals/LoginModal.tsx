@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { signIn } from 'next-auth/react';
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { FcGoogle } from 'react-icons/fc';
-import { useRouter } from 'next/navigation';
+import { useCallback, useState } from "react";
+import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/navigation";
 
-import useRegisterModal from '@/app/hooks/useRegisterModal';
-import useLoginModal from '@/app/hooks/useLoginModal';
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
 
-import Modal from './Modal';
-import Input from '../inputs/Input';
-import Heading from '../Heading';
-import Button from '../Button';
+import Modal from "./Modal";
+import Input from "../inputs/Input";
+import Heading from "../Heading";
+import Button from "../Button";
 
 const LoginModal = () => {
   const router = useRouter();
@@ -27,22 +27,22 @@ const LoginModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    signIn('credentials', {
+    signIn("credentials", {
       ...data,
       redirect: false,
     }).then((callback) => {
       setIsLoading(false);
 
       if (callback?.ok) {
-        toast.success('Logged in');
+        toast.success("Logged in");
         router.refresh();
         loginModal.onClose();
       }
@@ -64,11 +64,14 @@ const LoginModal = () => {
       <Input
         id="email"
         label="Email"
+        type='email'
         disabled={isLoading}
         register={register}
         errors={errors}
         required
+        pattern='^[a-zA-Z0-9._%+-]+@(gmail\.com|icloud\.com)$'
       />
+
       <Input
         id="password"
         label="Password"
@@ -88,7 +91,7 @@ const LoginModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => signIn('google')}
+        onClick={() => signIn("google")}
       />
       <div
         className="
@@ -104,7 +107,7 @@ const LoginModal = () => {
               hover:underline
             "
           >
-            {' '}
+            {" "}
             Create an account
           </span>
         </p>
