@@ -12,39 +12,39 @@ datasource db {
 
 type Feature {
   service String
-  price Int
+  price   Int
 }
 
-
 model User {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  name            String?
-  email           String?   @unique
-  emailVerified   DateTime?
-  image           String?
-  hashedPassword  String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  favoriteIds     String[] @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  phoneNumber   String?   @unique
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  favoriteIds    String[]  @db.ObjectId
 
-  accounts Account[]
-  listings Listing[]
+  accounts     Account[]
+  listings     Listing[]
   reservations Reservation[]
 }
 
 model Account {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId             String   @db.ObjectId
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.String
-  access_token       String?  @db.String
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.String
-  session_state      String?
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -52,38 +52,37 @@ model Account {
 }
 
 model Listing {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String
-  imageSrc String
-  createdAt DateTime @default(now())
-  category  String
-  time String?
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  imageSrc      String
+  createdAt     DateTime  @default(now())
+  category      String
+  time          String?
   bathroomCount Int?
-  guestCount Int?
+  guestCount    Int?
   locationValue String
-  userId String @db.ObjectId
-  price Int
+  userId        String    @db.ObjectId
+  price         Int
   // featureOne String?
   // featureTwo String?
-  features Feature[]
- 
+  features      Feature[]
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations Reservation[]
 }
 
 model Reservation {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  listingId String @db.ObjectId  
-  startDate DateTime
-  features Feature[]
-  endDate DateTime?
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String    @db.ObjectId
+  listingId  String    @db.ObjectId
+  startDate  DateTime
+  features   Feature[]
+  endDate    DateTime?
   totalPrice Int
-  createdAt DateTime @default(now())
-  startTime DateTime
-  endTime DateTime?
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  startTime  DateTime
+  endTime    DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing    Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
