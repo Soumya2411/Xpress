@@ -114,7 +114,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             const key = process.env.RAZORPAY_API_KEY;
             console.log(key);
             // Make API call to the serverless API
-            const data = await fetch("http://localhost:3000/api/razorpay", {
+            const data = await fetch("https://www.thexpresssalon.com/api/razorpay", {
               method: "POST",
               body: JSON.stringify({
                 totalPriceAfterTaxid: parseInt(totalPriceAfterTax),
@@ -137,7 +137,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               }) {
                 console.log("HERE" + response);
                 const data = await fetch(
-                  "http://localhost:3000/api/paymentverify",
+                  "https://www.thexpresssalon.com/api/paymentverify",
                   {
                     method: "POST",
                     body: JSON.stringify({
