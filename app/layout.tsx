@@ -8,7 +8,7 @@ import LoginModal from './components/modals/LoginModal';
 import getCurrentUser from './actions/getCurrentUser';
 import BusinessModal from './components/modals/BusinessModal';
 import SearchModal from './components/modals/SearchModal';
-
+import Script from "next/script";
 const inter = Figtree({ subsets: ['latin'] });
 
 export const metadata = {
@@ -23,6 +23,7 @@ export default async function RootLayout({
 }) {
   const currentUser = await getCurrentUser();
   return (
+    <>
     <html lang="en">
       <body className={inter.className}>
         <>
@@ -38,5 +39,7 @@ export default async function RootLayout({
         </>
       </body>
     </html>
+    <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+    </>
   );
 }
