@@ -27,6 +27,7 @@ const RegisterModal = () => {
       name: '',
       email: '',
       password: '',
+      phoneNumber: '',
     },
   });
 
@@ -62,6 +63,15 @@ const RegisterModal = () => {
         register={register}
         required
         errors={errors}
+      />
+      <Input
+        id="phoneNumber"
+        label="Phone Number" 
+        disabled={isLoading}
+        register={register}
+        required
+        errors={errors}
+        pattern="[7-9]{1}[0-9]{9}" 
       />
       <Input
         type="email"
