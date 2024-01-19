@@ -130,7 +130,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               }) {
                 console.log("HERE" + response);
                 const data = await fetch(
-                  "http://localhost:3000/api/paymentverify",
+                  "https://thexpresssalon.com/api/paymentverify",
                   {
                     method: "POST",
                     body: JSON.stringify({
