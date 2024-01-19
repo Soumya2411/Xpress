@@ -13,6 +13,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import ListingReservation from "@/app/components/listings/ListingReservation";
 import { Feature } from "@prisma/client";
+import Razorpay from 'razorpay';
 
 const initialDateRange = {
   startDate: new Date(),
@@ -25,6 +26,12 @@ interface ListingClientProps {
   currentUser?: SafeUser | null;
   // reservations?: SafeReservation[];
   reserved?: SafeReservation[];
+}
+
+declare global {
+  interface Window {
+    Razorpay: any; // Specify the correct type for Razorpay if possible
+  }
 }
 
 const ListingClient: React.FC<ListingClientProps> = ({
@@ -107,7 +114,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             const key = process.env.RAZORPAY_API_KEY;
             console.log(key);
             // Make API call to the serverless API
-            const data = await fetch("https://thexpresssalon.com/api/razorpay", {
+            const data = await fetch("http://localhost:3000/api/razorpay", {
               method: "POST",
               body: JSON.stringify({
                 totalPriceAfterTaxid: parseInt(totalPriceAfterTax),
@@ -116,7 +123,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             const { order } = await data.json();
             console.log(order.id);
             const options = {
-              key: key,
+              key: key as string,
               name: "Xpress",
               currency: order.currency,
               amount: order.amount,
@@ -130,7 +137,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               }) {
                 console.log("HERE" + response);
                 const data = await fetch(
-                  "https://thexpresssalon.com/api/paymentverify",
+                  "http://localhost:3000/api/paymentverify",
                   {
                     method: "POST",
                     body: JSON.stringify({
