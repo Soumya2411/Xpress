@@ -14,6 +14,7 @@ import { toast } from "react-hot-toast";
 import ListingReservation from "@/app/components/listings/ListingReservation";
 import { Feature } from "@prisma/client";
 import Razorpay from 'razorpay';
+import Email from "next-auth/providers/email";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -168,7 +169,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               },
               prefill: {
                 name: "Xpress",
-                email: "rupeshmishra813@gmail.com",
+                email: currentUser?.email || "",
                 contact: "8130350091",
               },
             };
