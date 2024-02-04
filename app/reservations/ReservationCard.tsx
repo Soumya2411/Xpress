@@ -7,13 +7,14 @@ import { SafeListing, SafeReservation, SafeUser } from '@/app/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { format } from 'date-fns';
-import HeartButton from '../HeartButton';
-import Button from '../Button';
+
+import Button from '../components/Button';
 
 interface ListingCardProps {
   data: SafeListing;
   reservation?: SafeReservation;
   onAction?: (id: string) => void;
+  handleVerify?: (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
   actionId?: string;
@@ -24,6 +25,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   data,
   reservation,
   onAction,
+  handleVerify,
   disabled,
   actionId = '',
   actionLabel,
@@ -75,9 +77,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             className="h-full w-full object-cover group-hover:scale-110 transition"
             fill
           />
-          <div className="absolute top-3 right-3">
-            <HeartButton listingId={data.id} currentUser={currentUser} />
-          </div>
+          
         </div>
         <div className=" font-semibold text-lg">
           {reservationDate || data.category}  {(currentUser?.id != data.userId && reservation?.totalPrice) && otp } 
@@ -106,7 +106,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
             label={actionLabel}
             onClick={handleCancel}
           />
-        )} 
+        )}
+        {!(currentUser?.id != data.userId && reservation?.totalPrice) && <Button
+            disabled={disabled}
+            small
+            label="Verify"
+            onClick={handleCancel}
+          /> } 
       </div>
     </div>
   );
