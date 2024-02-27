@@ -1,6 +1,6 @@
 'use client';
 
-import useCountries from '@/app/hooks/useCountries';
+// import useCountries from '@/app/hooks/useCountries'
 import { SafeListing, SafeUser } from '@/app/types';
 import Image from 'next/image';
 import { IconType } from 'react-icons';
@@ -10,7 +10,7 @@ interface ListingHeadProps {
   title: string;
   imageSrc: string;
   currentUser?: SafeUser | null;
-  location: string;
+  // location: string;
   id: string;
   user: SafeUser;
   category:
@@ -24,17 +24,11 @@ interface ListingHeadProps {
 }
 
 const ListingHead: React.FC<ListingHeadProps> = ({
-  title,
   imageSrc,
-  currentUser,
-  location,
   listing,
-  id,
   user,
   category,
 }) => {
-  const { getByValue } = useCountries();
-  const country = getByValue(location);
   const mins = listing?.time?.split(':');
   let showMins;
   if (mins) {
@@ -54,8 +48,6 @@ const ListingHead: React.FC<ListingHeadProps> = ({
             {category?.label}
           </div>
           <div className="text-white mt-2 flex items-center gap-1 font-normal text-md">
-            <HiOutlineLocationMarker size={15} /> {country?.label},{' '}
-            {country?.region}
           </div>
           <div className="text-white pt-8 text-lg">{listing.description}</div>
           <div className="flex flex-row gap-3 mt-3">

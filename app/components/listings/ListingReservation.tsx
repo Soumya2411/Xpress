@@ -28,7 +28,7 @@ import 'react-clock/dist/Clock.css';
 
 import { cn } from '../datepicker/libs/utils';
 import Button from '../Button';
-import { Feature, Reservation } from '@prisma/client';
+import { Feature } from '@prisma/client';
 import { SafeReservation } from '@/app/types';
 
 interface TimeOption {
@@ -49,19 +49,17 @@ interface ListingReservationProps {
   reserved: SafeReservation[];
   features: Feature[];
   removeFeature: (featureIndex: number) => void;
+  time:string
   
 }
 
 const ListingReservation: React.FC<ListingReservationProps> = ({
-  price,
-  dateRange,
-  totalPrice,
   onChangeDate,
   onSubmit,
   onSelect,
+  time,
   disabled,
   handleTimeSelect,
-  disableDates,
   reserved = [],
   features,
   removeFeature,
@@ -93,13 +91,19 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
     addHours(today, 9).toString(),
     addDays(new Date(addHours(today, 4)), 3).toString(),
   ];
-
+  console.log(time)
   let [freeTimes, setFreeTimes] = useState<Date[]>([]);
   useMemo(() => {
+    //filter out past times from freeTimes array to prevent booking in the past
+    function addHours(date:any, hours:any) {
+      date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+      return date;
+    }
+    const now = addHours(new Date(), 1);
     const StartOfToday = startOfDay(selectedDate);
     const endOfToday = endOfDay(selectedDate);
-    const startHour = set(StartOfToday, { hours: 10 });
-    const endHour = set(endOfToday, { hours: 17, minutes: 45 });
+    const startHour = set(StartOfToday, { hours:parseInt(time[0]+time[1]) });
+    const endHour = set(endOfToday, { hours: 19, minutes: 45 });
     let hoursInDay = eachMinuteOfInterval(
       {
         start: startHour,
@@ -108,9 +112,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
       { step: 30 }
     );
 
-    let freeTimes = hoursInDay.filter(
-      (hour) => !reservations.includes(parseISO(hour.toISOString()).toString())
-    );
+    let freeTimes = hoursInDay.filter(hour => {
+      const hourISO = parseISO(hour.toISOString());
+      return !reservations.includes(hourISO.toString()) && hourISO > now; // Filter out past times
+    });
     setFreeTimes(freeTimes);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,10 +133,6 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
 
   return (
     <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden">
-      {/* <div className="flex flex-row items-center gap-1 p-4">
-        <div className="text-2xl font-semibold ">Price - ${price}</div>
-      </div>
-      <hr /> */}
       <Calendar
         color="#000"
         minDate={minSelectableDate}
@@ -142,7 +143,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
 
       <div>
         <div className="flex flex-col items-center gap-2 mt-4 p-4">
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6  text-md gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 text-md gap-2">
             {freeTimes.map((hour, hourIdx) => {
               const isDisabled = reserved.some((reservation) =>
                 isSameMinute(new Date(reservation.startTime), hour)

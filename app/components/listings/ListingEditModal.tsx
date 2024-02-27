@@ -1,7 +1,4 @@
 'use client';
-import { IconType } from 'react-icons';
-import { SafeUser } from '@/app/types';
-import { Feature } from '@prisma/client';
 import React, { useState } from 'react'
 interface ListingEditModalProps {
     editFeatures:any[];
@@ -23,7 +20,6 @@ const ListingEditModal: React.FC<ListingEditModalProps>= (({
 
    
   }) => {
-    const[modalVis,setModalVis]=useState(false)
   return (
     <>
 
@@ -50,7 +46,7 @@ const ListingEditModal: React.FC<ListingEditModalProps>= (({
             <div className="space-y-4">
               {editFeatures.map((feature,index)=>(
 
-              <div className='flex justify-center items-center'>
+              <div key={"ele"+index} className='flex justify-center items-center'>
                 <input 
                 type="text"
                 onChange={(e)=>{

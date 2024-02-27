@@ -21,7 +21,8 @@ const ReservationsClient: React.FC<ReservationsClientProps> = ({
 }) => {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState('');
-
+  const [otpVis,setOtpVis] = useState(false)
+  const [otp,setOtp] = useState()
   const onCancel = useCallback(
     (id: string) => {
       setDeletingId(id);
@@ -41,14 +42,13 @@ const ReservationsClient: React.FC<ReservationsClientProps> = ({
     },
     [router]
   );
-  const handleVerify = useCallback(
-    (id: string) => {
+  const verifyOTP= async (id: string) => {
       setDeletingId(id);
 
       axios
         .delete(`/api/reservations/${id}`)
         .then(() => {
-          toast.success('Booking cancelled');
+          toast.success('Booking Verified');
           router.refresh();
         })
         .catch(() => {
@@ -56,12 +56,14 @@ const ReservationsClient: React.FC<ReservationsClientProps> = ({
         })
         .finally(() => {
           setDeletingId('');
+          window.location.reload()
         });
-    },
-    [router]
-  );
+    }
+  
+ 
 
   return (
+    <>
     <Container>
       <Heading title="Reservations" subtitle="Bookings on your business" />
       <div
@@ -84,7 +86,7 @@ const ReservationsClient: React.FC<ReservationsClientProps> = ({
             reservation={reservation}
             actionId={reservation.id}
             onAction={onCancel}
-            handleVerify={handleVerify}
+            handleVerify={verifyOTP} 
             disabled={deletingId === reservation.id}
             actionLabel="Cancel guest reservation"
             currentUser={currentUser}
@@ -92,6 +94,7 @@ const ReservationsClient: React.FC<ReservationsClientProps> = ({
         ))}
       </div>
     </Container>
+    </>
   );
 };
 
